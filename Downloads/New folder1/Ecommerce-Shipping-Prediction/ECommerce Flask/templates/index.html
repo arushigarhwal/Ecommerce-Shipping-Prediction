@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECommerce Shipping Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6200ee;
+            --secondary-color: #1e88e5;
+            --background-light: #f5f5f5;
+            --background-dark: #121212;
+            --text-light: #333333;
+            --text-dark: #ffffff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('https://images.unsplash.com/photo-1586880244406-556ebe35f282?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0);
+            transition: background 0.3s ease;
+            pointer-events: none;
+        }
+        body.dark-mode::before {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        .navbar {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            margin: 50px auto;
+            transition: all 0.3s ease;
+        }
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        select, input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 10px;
+            background: var(--background-light);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--secondary-color);
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: var(--primary-color);
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background: #7c4dff;
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+        .result {
+            margin-top: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .result.show {
+            opacity: 1;
+        }
+        .dark-mode-toggle {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+            width: auto;
+            position: relative;
+        }
+        .dark-mode-toggle::after {
+            content: 'Toggle dark mode';
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        .dark-mode-toggle:hover::after {
+            opacity: 1;
+        }
+        body.dark-mode {
+            background-color: var(--background-dark);
+        }
+        body.dark-mode .navbar, body.dark-mode .container, body.dark-mode .footer {
+            background: rgba(30, 30, 30, 0.9);
+        }
+        body.dark-mode .navbar h1, body.dark-mode h1, body.dark-mode .result, body.dark-mode .footer p {
+            color: var(--text-dark);
+        }
+        body.dark-mode select, body.dark-mode input[type="text"] {
+            background: #2c2c2c;
+            color: var(--text-dark);
+        }
+        body.dark-mode .dark-mode-toggle {
+            color: var(--secondary-color);
+        }
+        body.dark-mode .footer a {
+            color: var(--secondary-color);
+        }
+        .footer {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px 5%;
+            text-align: center;
+            margin-top: auto;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .footer p {
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+        .footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar fade-in">
+        <h1>ECommerce Shipping Predictor</h1>
+        <!--<button class="dark-mode-toggle" onclick="toggleDarkMode()">🌓</button>-->
+    </nav>
+    <div class="container fade-in">
+        <h1>Predict Delivery Time</h1>
+        <form action="/y_predict" method="post" id="dataForm">
+        <!--<form id="dataForm">-->
+            <select name="Warehouse" required>
+                <option value="">Select Warehouse Block</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="F">F</option>
+            </select>
+            <select name="M_O_S" required>
+                <option value="">Select Mode of Shipment</option>
+                <option value="Flight">Flight</option>
+                <option value="Ship">Ship</option>
+                <option value="Road">Road</option>
+            </select>
+            <select name="Importance" required>
+                <option value="">Select Product Importance</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+            <input type="text" name="Weight" placeholder="Weight of Product (grams)" required>
+            <input type="text" name="Customer_care_calls" placeholder="Number of Customer Care Calls" required>
+            <button type="submit">Predict Delivery Outcome</button>
+        </form>
+        <div class="result">
+            <h2>{{ prediction_text }}<h2>
+        </div>
+    </div>
+    <footer class="footer fade-in">
+        <p>Powered by advanced Machine Learning algorithms</p>
+        <p>Learn more about <a href="#">ECommerce Prediction</a> and <a href="#">Machine Learning in Logistics</a></p>
+        <p>&copy; 2024 ECommerce Shipping Predictor. All rights reserved.</p>
+    </footer>
+
+    <!--
+    <script>
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+        const form = document.getElementById('dataForm') 
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+             const formData = new FormData(form);
+            const params = new URLSearchParams(formData).toString();
+            
+            window.location.href = `/y_predict?${params}`;
+            });
+        // Add fade-in effect to elements as they load
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.fade-in').forEach(function(element) {
+                element.style.opacity = '1';
+            });
+        });
+    </script>
+    -->
+</body>
+</html>
